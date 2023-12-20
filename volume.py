@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
+import signal
 import colorsys
 import time
 
 import ioexpander as io
 
-print("""rotary.py
+# https://github.com/pimoroni/ioe-python/blob/master/examples/rotary.py
 
-Change the I2C_ADDR to:
- - 0x0F to use with the Rotary Encoder breakout.
- - 0x18 to use with IO Expander.
-
-Press Ctrl+C to exit.
-
-""")
+# print("""rotary.py
+#
+# Change the I2C_ADDR to:
+#  - 0x0F to use with the Rotary Encoder breakout.
+#  - 0x18 to use with IO Expander.
+#
+# Press Ctrl+C to exit.
+#
+# """)
 
 I2C_ADDR = 0x0F  # 0x18 for IO Expander, 0x0F for the encoder breakout
 
@@ -24,7 +27,7 @@ POT_ENC_A = 12
 POT_ENC_B = 3
 POT_ENC_C = 11
 
-BRIGHTNESS = 0.5                # Effectively the maximum fraction of the period that the LED will be on
+BRIGHTNESS = 1                # Effectively the maximum fraction of the period that the LED will be on
 PERIOD = int(255 / BRIGHTNESS)  # Add a period large enough to get 0-255 steps at the desired brightness
 
 ioe = io.IOE(i2c_addr=I2C_ADDR, interrupt_pin=4)
@@ -47,10 +50,25 @@ print("Running LED with {} brightness steps.".format(int(PERIOD * BRIGHTNESS)))
 count = 0
 r, g, b, = 0, 0, 0
 
-while True:
-    if ioe.get_interrupt():
-        count = ioe.read_rotary_encoder(1)
-        ioe.clear_interrupt()
+# while True:
+#     if ioe.get_interrupt():
+#         count = ioe.read_rotary_encoder(1)
+#         ioe.clear_interrupt()
+#
+#     h = (count % 360) / 360.0
+#     r, g, b = [int(c * PERIOD * BRIGHTNESS) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
+#     ioe.output(PIN_RED, r)
+#     ioe.output(PIN_GREEN, g)
+#     ioe.output(PIN_BLUE, b)
+#
+#     print(count, r, g, b)
+#
+#     time.sleep(1.0 / 30)
+
+
+def callback(channel):
+    count = ioe.read_rotary_encoder(1)
+    ioe.clear_interrupt()
 
     h = (count % 360) / 360.0
     r, g, b = [int(c * PERIOD * BRIGHTNESS) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
@@ -60,4 +78,7 @@ while True:
 
     print(count, r, g, b)
 
-    time.sleep(1.0 / 30)
+
+ioe.on_interrupt(callback)
+
+signal.pause()
