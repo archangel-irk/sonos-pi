@@ -67,6 +67,7 @@ r, g, b, = 0, 0, 0
 
 
 def callback(channel):
+    global count, r, g, b
     count = ioe.read_rotary_encoder(1)
     ioe.clear_interrupt()
 
