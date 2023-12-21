@@ -93,4 +93,7 @@ def listen_volume_change(callback=None):
     ioe.on_interrupt(lambda channel: volume_changed(channel, callback))
     print("Init volume knob")
 
-signal.pause()
+
+if __name__ == '__main__':
+    listen_volume_change()
+    signal.pause()
