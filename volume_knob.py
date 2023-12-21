@@ -2,8 +2,10 @@
 import signal
 import colorsys
 import time
-
+import RPi.GPIO as GPIO
 import ioexpander as io
+import atexit
+atexit.register(GPIO.cleanup)
 
 # https://github.com/pimoroni/ioe-python/blob/master/examples/rotary.py
 
@@ -27,7 +29,7 @@ POT_ENC_A = 12
 POT_ENC_B = 3
 POT_ENC_C = 11
 
-BRIGHTNESS = 1                # Effectively the maximum fraction of the period that the LED will be on
+BRIGHTNESS = 1                  # Effectively the maximum fraction of the period that the LED will be on
 PERIOD = int(255 / BRIGHTNESS)  # Add a period large enough to get 0-255 steps at the desired brightness
 
 ioe = io.IOE(i2c_addr=I2C_ADDR, interrupt_pin=4)
