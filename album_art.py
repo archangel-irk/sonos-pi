@@ -1,7 +1,7 @@
 import os
 import urllib.request
-import soco
 import display
+
 
 def display_current_playing_art(device):
     filepath = download_current_playing_art(device)
