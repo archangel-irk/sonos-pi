@@ -70,8 +70,12 @@ r, g, b, = 0, 0, 0
 
 def callback(channel):
     global count, r, g, b
-    count = ioe.read_rotary_encoder(1)
+
+    delta = ioe.read_rotary_encoder(1)
     ioe.clear_interrupt()
+    ioe.clear_rotary_encoder(1)
+
+    count += delta
 
     h = (count % 360) / 360.0
     r, g, b = [int(c * PERIOD * BRIGHTNESS) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
