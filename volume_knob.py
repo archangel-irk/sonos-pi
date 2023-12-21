@@ -68,12 +68,15 @@ r, g, b, = 0, 0, 0
 #     time.sleep(1.0 / 30)
 
 
-def callback(channel):
+def volume_changed(channel, callback=None):
     global count, r, g, b
 
     delta = ioe.read_rotary_encoder(1)
     ioe.clear_interrupt()
     ioe.clear_rotary_encoder(1)
+
+    if callback is not None:
+        callback(delta)
 
     count += delta
 
@@ -83,9 +86,11 @@ def callback(channel):
     ioe.output(PIN_GREEN, g)
     ioe.output(PIN_BLUE, b)
 
-    print(count, r, g, b)
+    # print(delta, r, g, b)
 
 
-ioe.on_interrupt(callback)
+def listen_volume_change(callback=None):
+    ioe.on_interrupt(lambda channel: volume_changed(channel, callback))
+    print("Init volume knob")
 
 signal.pause()
