@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import urllib.request
 import soco
@@ -9,6 +8,7 @@ import display
 # print(device.get_current_track_info())
 
 device = soco.discovery.by_name("Sonos TV")
+last_album_art_url = None
 
 # album_art.display_current_playing_art(device)
 
@@ -44,12 +44,16 @@ def set_relative_volume(delta):
 
 
 def display_current_album_art():
+    global last_album_art_url
     # Get Art URL from SONOS current track playing.
     # example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
     url = device.get_current_track_info()['album_art']
+    if url == '' or url == last_album_art_url:
+        return
     print(url)
     filepath = download_art(url)
     display.display_local_image_file(filepath)
+    last_album_art_url = url
 
 
 def download_art(url):

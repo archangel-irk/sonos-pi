@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import signal
 from queue import Empty
 from pprint import pprint
@@ -30,7 +29,9 @@ sub = sonos.device.avTransport.subscribe()
 while True:
     try:
         event = sub.events.get(timeout=0.5)
-        pprint(event.variables)
+        # pprint(event.variables)
+        if event.variables['transport_state'] == 'PLAYING':
+            sonos.display_current_album_art()
 
     except Empty:
         pass
