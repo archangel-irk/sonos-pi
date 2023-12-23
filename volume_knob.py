@@ -90,7 +90,17 @@ def volume_changed(channel, callback=None):
 
 
 def listen_volume_change(callback=None):
+    # Clear before listen to interrupt.
+    # Seems like "RGB Encoder Breakout" stores the interrupt flag in some of "Nuvoton microcontroller" registers.
+    # Probably sometimes when program exits the interrupt flag is not cleared.
+    # Then when new program starts it will not get new interrupts because the flag is not changing, it's already set and
+    # was not cleared.
+    # Fixes "Stop reacting on volume change".
+    ioe.clear_interrupt()
+    ioe.clear_rotary_encoder(1)
+
     ioe.on_interrupt(lambda channel: volume_changed(channel, callback))
+    # ioe._gpio.add_event_detect(self._interrupt_pin, self._gpio.FALLING, callback=callback, bouncetime=1)
     print("Init volume knob")
 
 
