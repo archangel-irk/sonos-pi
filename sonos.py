@@ -39,6 +39,11 @@ def get_volume():
 
 
 def set_relative_volume(delta):
+    # Unmute the device first.
+    # The device can be playing the music but being muted
+    # changing the volume doesn't unmute the device,
+    # so we need to do it manually.
+    device.mute = False
     new_volume = device.set_relative_volume(delta)
     return new_volume
 
