@@ -62,14 +62,23 @@ def display_current_album_art():
 
 
 def download_art(url):
+    # Using absolute path fixes permission denied problem when running in systemd.
+    # /home/konstantin/sonos-pi/covers
+    dirpath = os.path.dirname(os.path.realpath(__file__)) + "/covers/"
     # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
     # Get the last "hash" as a name
     filehash = url.split('/')[-1]
     filename = filehash + ".jpg"
     # Construct a file path
-    filepath = "./covers/" + filename
+    filepath = dirpath + filename
+
+    #print(os.path.dirname(os.path.realpath(__file__)))
+    print("Current umask:", oct(os.umask(0)))
+    print(dirpath)
+    print(filepath)
+
     # Make sure the "./covers/" folder exists. Create if doesn't exist.
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    os.makedirs(dirpath, exist_ok=True)
     # Download the image
     urllib.request.urlretrieve(url, filepath)
     return filepath
