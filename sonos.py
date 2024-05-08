@@ -65,8 +65,6 @@ def display_current_album_art():
 
 
 def download_art(url):
-    # Using absolute path fixes permission denied problem when running in systemd.
-    # /home/konstantin/sonos-pi/covers/
     dirpath = variables.COVERS_DIR
     # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
     # Get the last "hash" as a name
