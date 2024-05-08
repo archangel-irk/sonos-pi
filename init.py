@@ -6,6 +6,8 @@ from soco.events import event_listener
 import sonos
 import volume_knob
 import display
+import atexit
+#atexit.register(display.turn_off_display)
 
 
 def change_volume(delta):
