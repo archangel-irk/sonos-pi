@@ -1,0 +1,16 @@
+[Unit]
+Description=Sonos Control
+After=network-online.target multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/konstantin/sonos-pi/init.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/home/konstantin/sonos-pi/log.log
+StandardError=append:/home/konstantin/sonos-pi/error.log
+User=konstantin
+Group=konstantin
+
+[Install]
+WantedBy=multi-user.target
