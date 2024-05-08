@@ -4,6 +4,9 @@ After=network-online.target multi-user.target
 
 [Service]
 Type=simple
+# Set correct workdir otherwise "/" used.
+# Using absolute path fixes permission denied problem when running in systemd.
+WorkingDirectory=/home/konstantin/sonos-pi/
 ExecStart=/home/konstantin/sonos-pi/init.py
 Restart=on-failure
 RestartSec=3
