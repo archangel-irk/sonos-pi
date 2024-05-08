@@ -7,8 +7,8 @@ Type=simple
 ExecStart=/home/konstantin/sonos-pi/init.py
 Restart=on-failure
 RestartSec=3
-StandardOutput=append:/home/konstantin/sonos-pi/log.log
-StandardError=append:/home/konstantin/sonos-pi/error.log
+StandardOutput=append:/home/konstantin/sonos-pi/sonosd.log
+StandardError=append:/home/konstantin/sonos-pi/sonosd.error
 User=konstantin
 Group=konstantin
 

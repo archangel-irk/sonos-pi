@@ -3,6 +3,8 @@ import os
 import urllib.request
 import soco
 import display
+import variables
+import logger
 
 # print(device.set_relative_volume(-5))
 # print(device.get_current_track_info())
@@ -55,7 +57,8 @@ def display_current_album_art():
     url = device.get_current_track_info()['album_art']
     if url == '' or url == last_album_art_url:
         return
-    print(url)
+    #print(url)
+    logger.info("COVER_URL: %s", url)
     filepath = download_art(url)
     display.display_local_image_file(filepath)
     last_album_art_url = url
@@ -63,8 +66,8 @@ def display_current_album_art():
 
 def download_art(url):
     # Using absolute path fixes permission denied problem when running in systemd.
-    # /home/konstantin/sonos-pi/covers
-    dirpath = os.path.dirname(os.path.realpath(__file__)) + "/covers/"
+    # /home/konstantin/sonos-pi/covers/
+    dirpath = variables.COVERS_DIR
     # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
     # Get the last "hash" as a name
     filehash = url.split('/')[-1]
@@ -72,10 +75,7 @@ def download_art(url):
     # Construct a file path
     filepath = dirpath + filename
 
-    #print(os.path.dirname(os.path.realpath(__file__)))
-    print("Current umask:", oct(os.umask(0)))
-    print(dirpath)
-    print(filepath)
+    logger.info("filepath: %s", filepath)
 
     # Make sure the "./covers/" folder exists. Create if doesn't exist.
     os.makedirs(dirpath, exist_ok=True)

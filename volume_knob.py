@@ -4,6 +4,7 @@ import colorsys
 import time
 import RPi.GPIO as GPIO
 import ioexpander as io
+import logger
 import atexit
 atexit.register(GPIO.cleanup)
 
@@ -47,7 +48,8 @@ ioe.set_mode(PIN_RED, io.PWM, invert=True)
 ioe.set_mode(PIN_GREEN, io.PWM, invert=True)
 ioe.set_mode(PIN_BLUE, io.PWM, invert=True)
 
-print("Running LED with {} brightness steps.".format(int(PERIOD * BRIGHTNESS)))
+#print("Running LED with {} brightness steps.".format(int(PERIOD * BRIGHTNESS)))
+logger.info("Running LED with {} brightness steps.".format(int(PERIOD * BRIGHTNESS)))
 
 count = 0
 r, g, b, = 0, 0, 0
@@ -101,7 +103,8 @@ def listen_volume_change(callback=None):
 
     ioe.on_interrupt(lambda channel: volume_changed(channel, callback))
     # ioe._gpio.add_event_detect(self._interrupt_pin, self._gpio.FALLING, callback=callback, bouncetime=1)
-    print("Init volume knob")
+    #print("Init volume knob")
+    logger.info("Init volume knob")
 
 
 if __name__ == '__main__':

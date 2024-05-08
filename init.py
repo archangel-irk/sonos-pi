@@ -2,6 +2,11 @@
 import signal
 from queue import Empty
 from pprint import pprint
+
+# Import variables which also set current working directory
+import variables
+import logger
+
 from soco.events import event_listener
 import sonos
 import volume_knob
@@ -9,14 +14,15 @@ import display
 import atexit
 #atexit.register(display.turn_off_display)
 
-
 def change_volume(delta):
     display.turn_on_display()
     new_volume = sonos.set_relative_volume(delta)
-    print('Volume: ', new_volume)
+    #print('Volume: ', new_volume)
+    logger.info("Volume: %s", new_volume)
 
 
-print('Volume: ', sonos.get_volume())
+#print('Volume: ', sonos.get_volume())
+logger.info("Volume: %s", sonos.get_volume())
 
 # here you put your main loop or block of code
 volume_knob.listen_volume_change(change_volume)
