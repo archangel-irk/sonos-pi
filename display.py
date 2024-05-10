@@ -3,7 +3,6 @@ import threading
 import RPi.GPIO as GPIO
 from PIL import Image
 import ST7789 as ST7789
-import logger
 
 # GPIO.setmode(GPIO.BCM)
 
@@ -33,18 +32,16 @@ HEIGHT = disp.height
 # Initialize display.
 disp.begin()
 
-def display_local_image_file(image_file = "./cover.jpg"):
+def display_local_image_file(image_file):
     # Load an image from file.
-    #print('Loading image: {}...'.format(image_file))
-    logger.info('Loading image: {}...'.format(image_file))
+    print('Loading image: {}...'.format(image_file))
     image = Image.open(image_file)
 
     # Resize the image
     image = image.resize((WIDTH, HEIGHT))
 
     # Draw the image on the display hardware.
-    #print('Drawing image')
-    logger.info('Drawing image')
+    print('Drawing image')
     disp.display(image)
     turn_on_display()
 

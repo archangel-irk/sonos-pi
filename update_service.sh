@@ -5,7 +5,7 @@
 # sudo systemctl status sonosd
 
 # journalctl -xe
-# journalctl -u your_service_name
+# journalctl -u sonosd.service -e
 # tail -f /var/log/bird_watching.log
 
 # Define variables

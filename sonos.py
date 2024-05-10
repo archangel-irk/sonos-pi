@@ -3,8 +3,6 @@ import os
 import urllib.request
 import soco
 import display
-import variables
-import logger
 
 # print(device.set_relative_volume(-5))
 # print(device.get_current_track_info())
@@ -57,8 +55,7 @@ def display_current_album_art():
     url = device.get_current_track_info()['album_art']
     if url == '' or url == last_album_art_url:
         return
-    #print(url)
-    logger.info("COVER_URL: %s", url)
+    print("COVER_URL: ", url)
     filepath = download_art(url)
     display.display_local_image_file(filepath)
     last_album_art_url = url
@@ -77,7 +74,7 @@ def download_art(url):
     # Construct a file path
     filepath = COVERS_DIR + filename
 
-    logger.info("filepath: %s", filepath)
+    print("filepath: ", filepath)
 
     # Download the image
     urllib.request.urlretrieve(url, filepath)
