@@ -64,19 +64,21 @@ def display_current_album_art():
     last_album_art_url = url
 
 
+COVERS_DIR = "/tmp/sonosd/covers/"
+
 def download_art(url):
-    dirpath = variables.COVERS_DIR
+    # Make sure the temp covers folder exists. Create if doesn't exist.
+    os.makedirs(COVERS_DIR, exist_ok=True)
+
     # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
     # Get the last "hash" as a name
     filehash = url.split('/')[-1]
     filename = filehash + ".jpg"
     # Construct a file path
-    filepath = dirpath + filename
+    filepath = COVERS_DIR + filename
 
     logger.info("filepath: %s", filepath)
 
-    # Make sure the "./covers/" folder exists. Create if doesn't exist.
-    os.makedirs(dirpath, exist_ok=True)
     # Download the image
     urllib.request.urlretrieve(url, filepath)
     return filepath
