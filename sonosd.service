@@ -9,6 +9,8 @@ Restart=on-failure
 RestartSec=3
 User=konstantin
 Group=konstantin
+# Otherwise you will not see any log messages until the buffer is flushed.
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
