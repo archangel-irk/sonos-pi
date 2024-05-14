@@ -20,7 +20,7 @@ print('------------START SONOSC------------')
 print('cwd: ', os.getcwd())
 
 
-def change_volume(delta):
+def change_volume_handler(delta):
     display.turn_on_display()
     new_volume = sonos.set_relative_volume(delta)
     print("Volume: ", new_volume)
@@ -29,13 +29,13 @@ def change_volume(delta):
 print("Volume: ", sonos.get_volume())
 
 # here you put your main loop or block of code
-volume_knob.listen_volume_change(change_volume)
+volume_knob.listen_volume_change(change_volume_handler)
 sonos.display_current_album_art()
 
 # signal.pause()
 
-# Subscribe to AV events
-sub = sonos.device.avTransport.subscribe()
+# Subscribe to sonos events
+sub = sonos.subscribe()
 
 # print out the events as they arise
 while True:
