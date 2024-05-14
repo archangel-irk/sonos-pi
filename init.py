@@ -50,8 +50,9 @@ while True:
     try:
         event = avTransport.events.get(timeout=0.5)
         # pprint(event.variables)
-        if event.variables['transport_state'] == 'PLAYING':
-            sonos.display_current_album_art()
+        if 'transport_state' in event.variables:
+            if event.variables['transport_state'] == 'PLAYING':
+                sonos.display_current_album_art()
     except Empty:
         pass
 
