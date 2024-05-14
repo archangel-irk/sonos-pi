@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import os
 import urllib.request
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
+from urllib.parse import unquote
+from pprint import pprint
 import soco
 import display
 
@@ -11,6 +15,12 @@ device = soco.discovery.by_name("Sonos TV")
 last_album_art_url = None
 
 # album_art.display_current_playing_art(device)
+
+# url can be:
+# 1. If a song played from spotify app the url will be like
+#    https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
+# 2. If a song played from sonos app the url will be like
+#    http://10.0.1.9:1400/getaa?s=1&u=x-sonos-spotify%3aspotify%253atrack%253a2GR2ljPQLtDfQsYd14Uxrm%3fsid%3d9%26flags%3d8232%26sn%3d1
 
 # Examples of art URLs through sonos
 # http://10.0.1.4:1400/getaa?s=1&u=x-sonos-spotify%3aspotify%253atrack%253a3VpxEo6vMpi4rQ6t2WVVkK%3fsid%3d9%26flags%3d8232%26sn%3d1
@@ -59,9 +69,9 @@ def set_relative_volume(delta):
 
 def display_current_album_art():
     global last_album_art_url
-    # Get Art URL from SONOS current track playing.
-    # example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
-    url = device.get_current_track_info()['album_art']
+    # Get Art URL from device current track playing.
+    track_info = device.get_current_track_info()
+    url = track_info['album_art']
     if url == '' or url == last_album_art_url:
         return
     print("COVER_URL: ", url)
@@ -76,10 +86,7 @@ def download_art(url):
     # Make sure the temp covers folder exists. Create if doesn't exist.
     os.makedirs(COVERS_DIR, exist_ok=True)
 
-    # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
-    # Get the last "hash" as a name
-    filehash = url.split('/')[-1]
-    filename = filehash + ".jpg"
+    filename = get_track_filename(url)
     # Construct a file path
     filepath = COVERS_DIR + filename
 
@@ -88,3 +95,28 @@ def download_art(url):
     # Download the image
     urllib.request.urlretrieve(url, filepath)
     return filepath
+
+
+def get_track_filename(url):
+    # process sonos type url
+    # http://10.0.1.9:1400/getaa?s=1&u=x-sonos-spotify%3aspotify%253atrack%253a2GR2ljPQLtDfQsYd14Uxrm%3fsid%3d9%26flags%3d8232%26sn%3d1
+    if 'x-sonos-spotify' in url:
+        parsed_url = urlparse(url)
+        # https://github.com/jishi/node-sonos-http-api/blob/1fa4cdc998d6cf7b0448a2c622b51d352dd05a0b/lib/actions/spotify.js#L20
+        # sonos uri looks like "x-sonos-spotify:${encodedSpotifyUri}?sid=${sid}&flags=32&sn=1"
+        sonos_uri = parse_qs(parsed_url.query)['u'][0]
+        # take the encodedSpotifyUri part from sonos uri
+        spotify_uri_encoded = sonos_uri.removeprefix('x-sonos-spotify:').split('?')[0]
+        # https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids
+        # get "spotify:track:4YxrU1KNuhskMAQztkACrA"
+        spotify_uri = unquote(spotify_uri_encoded)
+        # The base-62 identifier found at the end of the Spotify URI (see above) for an artist, track, album, playlist, etc.
+        spotify_id = spotify_uri.split(':')[2]
+        filehash = spotify_id
+
+    else:
+        # url example: https://i.scdn.co/image/ab67616d0000b2731d31a4969ceaaaa91c52e025
+        # Get the last "hash" as a name
+        filehash = url.split('/')[-1]
+
+    return filehash + ".jpg"
