@@ -80,7 +80,8 @@ def volume_changed(channel, callback=None):
 
     count += delta
 
-    h = (count % 360) / 360.0
+    # was 360
+    h = (count % 50) / 50.0
     r, g, b = [int(c * PERIOD * BRIGHTNESS) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
     ioe.output(PIN_RED, r)
     ioe.output(PIN_GREEN, g)

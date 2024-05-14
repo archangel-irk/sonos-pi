@@ -44,7 +44,7 @@ def display_update():
     else:
         # Load an image from file.
         image = Image.open(image_path)
-        image = image.resize((WIDTH, HEIGHT)) # Resize the image
+        image = image.resize((WIDTH, HEIGHT))  # Resize the image
 
     draw = ImageDraw.Draw(image)
     draw.text(
