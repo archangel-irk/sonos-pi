@@ -35,20 +35,29 @@ sonos.display_current_album_art()
 # signal.pause()
 
 # Subscribe to sonos events
-sub = sonos.subscribe()
+renderingControl, avTransport = sonos.subscribe()
 
 # print out the events as they arise
 while True:
     try:
-        event = sub.events.get(timeout=0.5)
+        event = renderingControl.events.get(timeout=0.5)
+        # pprint(event.variables)
+        if 'volume' in event.variables:
+            print(event.variables['volume']['Master'])
+    except Empty:
+        pass
+
+    try:
+        event = avTransport.events.get(timeout=0.5)
         # pprint(event.variables)
         if event.variables['transport_state'] == 'PLAYING':
             sonos.display_current_album_art()
-
     except Empty:
         pass
+
     except KeyboardInterrupt:
-        sub.unsubscribe()
+        renderingControl.unsubscribe()
+        avTransport.unsubscribe()
         event_listener.stop()
         break
 

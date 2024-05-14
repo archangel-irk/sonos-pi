@@ -37,7 +37,10 @@ last_album_art_url = None
 def subscribe():
     # Subscribe to AV events
     # http://docs.python-soco.com/en/latest/api/soco.events.html
-    return device.avTransport.subscribe(auto_renew=True)
+    return [
+        device.renderingControl.subscribe(auto_renew=True),
+        device.avTransport.subscribe(auto_renew=True)
+    ]
 
 
 def get_volume():
