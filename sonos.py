@@ -82,6 +82,7 @@ def display_current_album_art():
 
 COVERS_DIR = "/tmp/sonosd/covers/"
 
+
 def download_art(url):
     # Make sure the temp covers folder exists. Create if doesn't exist.
     os.makedirs(COVERS_DIR, exist_ok=True)

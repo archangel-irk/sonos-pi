@@ -1,7 +1,7 @@
 import time
 import threading
 import RPi.GPIO as GPIO
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import ST7789 as ST7789
 
 # GPIO.setmode(GPIO.BCM)
@@ -32,18 +32,48 @@ HEIGHT = disp.height
 # Initialize display.
 disp.begin()
 
-def display_local_image_file(image_file):
-    # Load an image from file.
-    print('Loading image: {}...'.format(image_file))
-    image = Image.open(image_file)
+image_path = ""
+volume = "-"
 
-    # Resize the image
-    image = image.resize((WIDTH, HEIGHT))
+
+def display_update():
+    global volume, image_path
+    if image_path == '':
+        # Create a blank image so the variable (display) will not be empty when only volume is displayed.
+        image = Image.new("RGB", (240, 240), color=(0, 0, 0))
+    else:
+        # Load an image from file.
+        image = Image.open(image_path)
+        image = image.resize((WIDTH, HEIGHT)) # Resize the image
+
+    draw = ImageDraw.Draw(image)
+    draw.text(
+        (200, 200),
+        anchor="rs",
+        text=str(volume),
+        fill=(0, 0, 0),
+        stroke_width=2,
+        stroke_fill=(255, 255, 255),
+        font_size=40
+    )
 
     # Draw the image on the display hardware.
-    print('Drawing image')
     disp.display(image)
     turn_on_display()
+
+
+def display_local_image_file(new_image_path):
+    global image_path
+    image_path = new_image_path
+    print('Update image: {}'.format(image_path))
+    display_update()
+
+
+def display_volume(new_volume='-'):
+    global volume
+    volume = new_volume
+    print('Update volume: {}'.format(volume))
+    display_update()
 
 
 def turn_off_display():

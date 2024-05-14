@@ -6,6 +6,7 @@
 
 # journalctl -xe
 # journalctl -u sonosd.service -e
+# journalctl -u sonosd.service -f
 # tail -f /var/log/bird_watching.log
 
 # Define variables

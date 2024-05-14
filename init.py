@@ -43,7 +43,7 @@ while True:
         event = renderingControl.events.get(timeout=0.5)
         # pprint(event.variables)
         if 'volume' in event.variables:
-            print(event.variables['volume']['Master'])
+            display.display_volume(event.variables['volume']['Master'])
     except Empty:
         pass
 
