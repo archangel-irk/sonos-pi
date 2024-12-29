@@ -3,6 +3,7 @@ import signal
 from queue import Empty
 from pprint import pprint
 import os
+import threading
 from soco.events import event_listener
 import sonos
 import volume_knob
@@ -18,24 +19,43 @@ import atexit
 
 print('------------START SONOSC------------')
 print('cwd: ', os.getcwd())
-
-
-def change_volume_handler(delta):
-    display.turn_on_display()
-    new_volume = sonos.set_relative_volume(delta)
-    print("Volume: ", new_volume)
-
-
 print("Volume: ", sonos.get_volume())
 
-# here you put your main loop or block of code
-volume_knob.listen_volume_change(change_volume_handler)
+volume_events_timer = None
+
+
+# https://docs.sonos.com/docs/volume
+def knob_volume_handler(delta):
+    global volume_events_timer
+    sonos.set_relative_volume(delta)
+    display.display_volume(sonos.cached_volume)
+
+    sonos.ignore_volume_events = True
+    if volume_events_timer is not None:
+        volume_events_timer.cancel()
+
+    def resume_event_handling():
+        sonos.ignore_volume_events = False
+
+    # event volume changes can be slow, keep ignoring events for two more seconds
+    volume_events_timer = threading.Timer(2, resume_event_handling)
+    volume_events_timer.start()
+
+
+def event_volume_handler(new_volume):
+    sonos.cached_volume = new_volume
+    display.display_volume(sonos.cached_volume)
+
+
+volume_knob.listen_volume_change(knob_volume_handler)
 sonos.display_current_album_art()
 
 # signal.pause()
 
 # Subscribe to sonos events
-renderingControl, avTransport = sonos.subscribe()
+renderingControl = sonos.subscribe_volume()
+avTransport = sonos.subscribe_current_track()
+
 
 # print out the events as they arise
 while True:
@@ -43,7 +63,9 @@ while True:
         event = renderingControl.events.get(timeout=0.5)
         # pprint(event.variables)
         if 'volume' in event.variables:
-            display.display_volume(event.variables['volume']['Master'])
+            sonos.last_evented_volume = event.variables['volume']['Master']
+            if not sonos.ignore_volume_events:
+                event_volume_handler(event.variables['volume']['Master'])
     except Empty:
         pass
 
