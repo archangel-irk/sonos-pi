@@ -13,6 +13,9 @@ import display
 
 device = soco.discovery.by_name("Sonos TV")
 last_album_art_url = None
+cached_volume = None
+last_evented_volume = None
+ignore_volume_events = False
 
 # album_art.display_current_playing_art(device)
 
@@ -44,13 +47,14 @@ last_album_art_url = None
 # print(device.get_current_track_info())
 
 
-def subscribe():
+def subscribe_volume():
+    return device.renderingControl.subscribe(auto_renew=True)
+
+
+def subscribe_current_track():
     # Subscribe to AV events
     # http://docs.python-soco.com/en/latest/api/soco.events.html
-    return [
-        device.renderingControl.subscribe(auto_renew=True),
-        device.avTransport.subscribe(auto_renew=True)
-    ]
+    return device.avTransport.subscribe(auto_renew=True)
 
 
 def get_volume():
@@ -58,13 +62,14 @@ def get_volume():
 
 
 def set_relative_volume(delta):
+    global cached_volume
     # Unmute the device first.
     # The device can be playing the music but being muted
     # changing the volume doesn't unmute the device,
     # so we need to do it manually.
     device.mute = False
     new_volume = device.set_relative_volume(delta)
-    return new_volume
+    cached_volume = new_volume
 
 
 def display_current_album_art():
