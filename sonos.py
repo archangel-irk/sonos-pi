@@ -11,7 +11,7 @@ import display
 # print(device.set_relative_volume(-5))
 # print(device.get_current_track_info())
 
-device = soco.discovery.by_name("Sonos TV")
+device = soco.discovery.by_name("Sonos PC")
 last_album_art_url = None
 cached_volume = None
 last_evented_volume = None
